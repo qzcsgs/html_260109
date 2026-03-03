@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone eats first</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/addons/p5.sound.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    canvas {
+      transform-origin: top left;
+    }
+
+    .container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9;
+      overflow: auto;
+      background-color: rgb(152, 152, 152);
+    }
+
+    .menu-list {
+      padding: 88px 64px;
+    }
+
+    .menu-list img {
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <div class="container">
+      <img src="images/cover.png" width="100%" alt="">
+      <div class="menu-list">
+        <img src="images/menu-1.png" width="100%" alt="" onclick="toType(0)">
+        <img src="images/menu-2.png" width="100%" alt="" onclick="toType(1)">
+        <img src="images/menu-3.png" width="100%" alt="" onclick="toType(2)">
+      </div>
+    </div>
+  </main>
+
+  <script src="icon.js"></script>
+  <script src="sketch.js"></script>
+</body>
+
+</html>
