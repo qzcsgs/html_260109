@@ -3,6 +3,7 @@ const { app, BrowserWindow, globalShortcut } = require('electron')
 const ALLOW_URL = "https://phoneeatsfirst.top"   // ← 允许访问的网址域名
 let inputBuffer = ""           // 键盘输入缓存
 const EXIT_CODE = "exit123"    // 你的退出密码
+const REFRESH_CODE = "rrrrr" // 强制刷新
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -65,7 +66,14 @@ function createWindow() {
 
         // 检测密码
         if (inputBuffer === EXIT_CODE) {
+          inputBuffer = ""
           win.close()
+        }
+
+        // ===== 强制刷新页面 =====
+        if (inputBuffer === REFRESH_CODE) {
+          inputBuffer = ""
+          win.webContents.reloadIgnoringCache() // 强制刷新（不使用缓存）
         }
       }
     }
