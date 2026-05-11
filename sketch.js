@@ -3,87 +3,107 @@ let scaleRatioH
 let scaleRatioW
 let mx, my;
 
-let coverImg;
-let menuImgs = [];
-let bgImgs = [];
-let type1IconImgs = [];
-let type2IconImgs = [];
-let type3IconImgs = [];
-let type1IconFragImgs = [];
-let type2IconFragImgs = [];
-let type3IconFragImgs = [];
-let previewImgs = [];
-let camImg;
-let mouseImg;
-let baseMapImgs = [
-  [],
-  [],
-  [],
-];
+let screenFlash;
 
 let step = 1;
-let typeIndex = -1; // 0甜品 1西餐 2日料
-let typeIcons = [
-  [],
-  [],
-  []
-];
-let takePhoto = false;
-let photoPG;
-let mosaicSize = 10;
-let clipPoints = {}
-let actionCount = 0;
-let drawingBoard;
+let coverImgs = [];
+let coverIcons = [];
+let showQuery = false;
+let step1_camY = 1080;
+
+let sceneChooseImgs = [];
+let sceneChooseOrbitIcon;
+let sceneBgImg, sceneTitleImg;
+let sceneChooseIndex = -1;
+
+let bgImages = [];
+let typeImgs = [[], [], []];
+let typeIcons = [[], [], []];
+let homeButtonImg;
+let homeButtonIcon;
+let camImg;
+let camIcon;
+let phoneImg;
+let phoneIcon;
+let showCam = true;
+let showPhone = false;
+let isFault = false;
+let faultColor = null;
+let weiyeBgImg;
+let weiyeBgTitleImgs = [];
+let weiyeTitleOffset = []
+let weiyeTitleA = 0;
+let weiyeTime = 0;
+let showCoverCam = false;
+let tipsImg;
+let step3Time = 0;
+let step3TipsA = 0;
+let backImg;
+let backIcon;
+let phoneScale = 1;
+let titleIndex = 0;
+let fauletBgImgs = [];
+let fauletBackground = [];
+
+let figureEight;
+let bgm, kacha, click, typing;
 
 function preload() {
-  coverImg = myLoadImage('images/cover.png');
-  for (let i = 0; i < 3; i++) {
-    menuImgs.push(myLoadImage(`images/menu-${i + 1}.png`));
-  }
-  for (let i = 0; i < 3; i++) {
-    bgImgs.push(myLoadImage(`images/${i}/bg.png`));
+  bgm = loadSound('assets/bgm.ogg');
+  kacha = loadSound('assets/shutter.mp3');
+  click = loadSound('assets/click.mp3');
+  typing = loadSound('assets/typing.mp3');
+
+  coverImgs.push(loadImage('assets/cover/标题.png'));
+  coverImgs.push(loadImage('assets/cover/叉.png'));
+  coverImgs.push(loadImage('assets/cover/刀.png'));
+  coverImgs.push(loadImage('assets/cover/筷.png'));
+  coverImgs.push(loadImage('assets/cover/勺.png'));
+  coverImgs.push(loadImage('assets/cover/手势.png'));
+  coverImgs.push(loadImage('assets/cover/问题.png'));
+  coverImgs.push(loadImage('assets/cover/主页.png'));
+  coverImgs.push(loadImage('assets/cover/no.png'));
+  coverImgs.push(loadImage('assets/cover/yes.png'));
+
+  for (let i = 0; i < 9; i++) {
+    sceneChooseImgs.push(loadImage('assets/scene_choose/' + (i + 1) + '.png'));
   }
 
+  sceneBgImg = loadImage('assets/scene_choose/背景.png');
+  sceneTitleImg = loadImage('assets/scene_choose/标题.png');
+
+  for (let i = 0; i < 3; i++) {
+    bgImages.push(loadImage('assets/bg/' + (i + 1) + '.png'));
+  }
   for (let i = 0; i < 6; i++) {
-    type1IconImgs.push(myLoadImage(`images/0/${i}.png`));
+    typeImgs[0].push(loadImage('assets/1/image_' + (i + 1) + '.png'));
   }
   for (let i = 0; i < 7; i++) {
-    type1IconFragImgs.push(myLoadImage(`images/0/frag/${i}.png`));
+    typeImgs[1].push(loadImage('assets/2/image_' + (i + 1) + '.png'));
   }
-
-  for (let i = 0; i < 6; i++) {
-    type2IconImgs.push(myLoadImage(`images/1/${i}.png`));
+  for (let i = 0; i < 7; i++) {
+    typeImgs[2].push(loadImage('assets/3/image_' + (i + 1) + '.png'));
   }
-  for (let i = 0; i < 5; i++) {
-    type2IconFragImgs.push(myLoadImage(`images/1/frag/${i}.png`));
+  homeButtonImg = loadImage('assets/home.png');
+  camImg = loadImage('assets/cam.png');
+  phoneImg = loadImage('assets/phone.png');
+  weiyeBgImg = loadImage('assets/weiye/bg.png');
+  for (let i = 1; i <= 31; i++) {
+    weiyeBgTitleImgs.push(loadImage('assets/weiye/title/image_' + i + '.png'));
+    weiyeTitleOffset.push(random(-10, 10));
   }
-
-  for (let i = 0; i < 6; i++) {
-    type3IconImgs.push(myLoadImage(`images/2/${i}.png`));
-  }
-  for (let i = 0; i < 6; i++) {
-    type3IconFragImgs.push(myLoadImage(`images/2/frag/${i}.png`));
-  }
-
-  for (let i = 0; i < 3; i++) {
-    previewImgs.push(myLoadImage(`images/preview-${i + 1}.png`));
-  }
-
-  camImg = myLoadImage('images/cam.png');
-  mouseImg = myLoadImage('images/mouse.png');
-  for (let i = 0; i < 3; i++) {
-    baseMapImgs[i].push(myLoadImage(`images/${i}/basemap/1.png`));
-    baseMapImgs[i].push(myLoadImage(`images/${i}/basemap/2.png`));
+  tipsImg = loadImage('assets/tips.png');
+  backImg = loadImage('assets/back.png');
+  for (let i = 1; i <= 9; i++) {
+    fauletBgImgs.push(loadImage('assets/f_bg/image_' + i + '.jpg'));
   }
 }
 
 function setup() {
-  let canvas = createCanvas(1920, 1080);
+  const canvas = createCanvas(1920, 1080);
   canvasDOM = canvas.elt;
 
-  photoPG = createGraphics(1920, 1080);
-  drawingBoard = createGraphics(1920, 1080);
-  drawingBoard.clear();
+  screenFlash = new ScreenFlash();
 
   resizeImage();
   initIcons();
@@ -91,172 +111,212 @@ function setup() {
 }
 
 function initIcons() {
-  typeIcons[0].push(new Icon(type1IconImgs[0], 356, 258, 1));
-  typeIcons[0].push(new Icon(type1IconImgs[1], 237, 610, 1));
-  typeIcons[0].push(new Icon(type1IconImgs[2], 675, 771, 1));
-  typeIcons[0].push(new Icon(type1IconImgs[3], 697, 451, 1));
-  typeIcons[0].push(new Icon(type1IconImgs[4], 952, 900, 1));
-  typeIcons[0].push(new Icon(type1IconImgs[5], 1090, 618, 1));
+  figureEight = new FigureEight(coverImgs[0]);
+  coverIcons.push(new Icon(coverImgs[2], 0, 194, true));
+  coverIcons.push(new Icon(coverImgs[1], 160, 298, true));
+  coverIcons.push(new Icon(coverImgs[4], 1647, 319, true));
+  coverIcons.push(new Icon(coverImgs[3], 1816, 248, true));
 
-  typeIcons[0].push(new Icon(type1IconFragImgs[0], 131, 584, 2));
-  typeIcons[0].push(new Icon(type1IconFragImgs[1], 179, 422, 2));
-  typeIcons[0].push(new Icon(type1IconFragImgs[2], 585, 701, 2));
-  typeIcons[0].push(new Icon(type1IconFragImgs[3], 933, 160, 2));
-  typeIcons[0].push(new Icon(type1IconFragImgs[4], 1059, 527, 2));
-  typeIcons[0].push(new Icon(type1IconFragImgs[5], 1276, 443, 2));
-  typeIcons[0].push(new Icon(type1IconFragImgs[6], 1450, 755, 2));
+  sceneChooseOrbitIcon = new OrbitIcon(sceneChooseImgs);
 
-  typeIcons[1].push(new Icon(type2IconImgs[0], 352, 449, 1));
-  typeIcons[1].push(new Icon(type2IconImgs[1], 613, 577, 1));
-  typeIcons[1].push(new Icon(type2IconImgs[2], 1042, 75, 1));
-  typeIcons[1].push(new Icon(type2IconImgs[3], 1322, 627, 1));
-  typeIcons[1].push(new Icon(type2IconImgs[4], 345, 672, 1));
-  typeIcons[1].push(new Icon(type2IconImgs[5], 1410, 426, 1));
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < typeImgs[i].length; j++) {
+      let x = random(113, 1823 - typeImgs[i][j].width)
+      let y = random(411, 1073 - typeImgs[i][j].height);
+      typeIcons[i].push(new Icon(typeImgs[i][j], x, y, false));
+    }
+  }
 
-  typeIcons[1].push(new Icon(type2IconFragImgs[0], 566, 300, 2));
-  typeIcons[1].push(new Icon(type2IconFragImgs[1], 845, 319, 2));
-  typeIcons[1].push(new Icon(type2IconFragImgs[2], 493, 548, 2));
-  typeIcons[1].push(new Icon(type2IconFragImgs[3], 1575, 781, 2));
-  typeIcons[1].push(new Icon(type2IconFragImgs[4], 115, 872, 2));
-
-  typeIcons[2].push(new Icon(type3IconImgs[0], 1538, 351, 1));
-  typeIcons[2].push(new Icon(type3IconImgs[1], 782, 634, 1));
-  typeIcons[2].push(new Icon(type3IconImgs[2], 218, 582, 1));
-  typeIcons[2].push(new Icon(type3IconImgs[3], 1459, 846, 1));
-  typeIcons[2].push(new Icon(type3IconImgs[4], 535, 381, 1));
-  typeIcons[2].push(new Icon(type3IconImgs[5], 1671, 624, 1));
-
-  typeIcons[2].push(new Icon(type3IconFragImgs[0], 76, 711, 2));
-  typeIcons[2].push(new Icon(type3IconFragImgs[1], 1185, 180, 2));
-  typeIcons[2].push(new Icon(type3IconFragImgs[2], 637, 869, 2));
-  typeIcons[2].push(new Icon(type3IconFragImgs[3], 1439, 339, 2));
-  typeIcons[2].push(new Icon(type3IconFragImgs[4], 1458, 759, 2));
-  typeIcons[2].push(new Icon(type3IconFragImgs[5], 1783, 754, 2));
+  homeButtonIcon = new Icon(homeButtonImg, width / 2 - homeButtonImg.width / 2, 20, false);
+  camIcon = new Icon(camImg, 36, 300, false);
+  phoneIcon = new Icon(phoneImg, width / 2 - phoneImg.width / 2, 20, false);
+  backIcon = new Icon(backImg, 36, 300, false);
+  fauletBackground[0] = new FauletBackground(bgImages[0], [fauletBgImgs[0], fauletBgImgs[1], fauletBgImgs[2]]);
+  fauletBackground[1] = new FauletBackground(bgImages[1], [fauletBgImgs[3], fauletBgImgs[4], fauletBgImgs[5]]);
+  fauletBackground[2] = new FauletBackground(bgImages[2], [fauletBgImgs[6], fauletBgImgs[7], fauletBgImgs[8]]);
 }
 
 function resizeImage() {
-  coverImg.resize(width, height);
-  for (let img of menuImgs) {
-    img.resize(width - 128, 0);
+  resizeImgs(coverImgs);
+  resizeImgs(sceneChooseImgs);
+  resizeImgs([sceneBgImg, sceneTitleImg, homeButtonImg, camImg, phoneImg, weiyeBgImg, tipsImg, backImg]);
+  resizeImgs(bgImages);
+  for (let i = 0; i < typeImgs.length; i++) {
+    resizeImgs(typeImgs[i]);
   }
-  for (let img of bgImgs) {
-    img.resize(width, height);
-  }
-  for (let img of type1IconImgs) {
+  resizeImgs(weiyeBgTitleImgs);
+  resizeImgs(fauletBgImgs);
+}
+
+function resizeImgs(imgs) {
+  for (let img of imgs) {
     img.resize(img.width / (8000 / 1920), 0);
-  }
-  for (let img of type1IconFragImgs) {
-    img.resize(img.width / (8000 / 1920), 0);
-  }
-  for (let img of type2IconImgs) {
-    img.resize(img.width / (8000 / 1920), 0);
-  }
-  for (let img of type2IconFragImgs) {
-    img.resize(img.width / (8000 / 1920), 0);
-  }
-  for (let img of type3IconImgs) {
-    img.resize(img.width / (8000 / 1920), 0);
-  }
-  for (let img of type3IconFragImgs) {
-    img.resize(img.width / (8000 / 1920), 0);
-  }
-  camImg.resize(100, 0);
-  mouseImg.resize(300, 0);
-  for (let i = 0; i < 3; i++) {
-    baseMapImgs[i][0].resize(width, height);
-    baseMapImgs[i][1].resize(width, height);
   }
 }
 
 function draw() {
-  background(152);
+  background(255);
 
   mx = mouseX / scaleRatioW;
   my = mouseY / scaleRatioH;
 
   if (step == 1) {
-    image(coverImg, 0, 0);
-  } else if (step == 2) {
-    let prevY = 64;
-    for (let i = 0; i < 3; i++) {
-      if (i > 0) {
-        prevY += menuImgs[i - 1].height + 32;
-      }
-      image(menuImgs[i], 64, prevY);
+    image(coverImgs[7], 0, 0);
+
+    figureEight.update();
+    figureEight.display();
+
+    for (let icon of coverIcons) {
+      icon.display();
+      icon.update();
     }
-  } else if (step == 3) {
-    if (takePhoto) {
-      image(photoPG, 0, 0);
-
-      if (mouseIsPressed) {
-        clipPoints[actionCount] = clipPoints[actionCount] || []
-        let bool = false;
-        let keys = Object.keys(clipPoints);
-
-        for (let p of keys) {
-          for (let p2 of clipPoints[p]) {
-            if (dist(p2.x, p2.y, mx, my) < 75 && p2.actionCount != actionCount) {
-              bool = true;
-              break;
-            }
-          }
-          if (bool) {
-            break;
-          }
-        }
-
-        let index = bool ? 1 : 0;
-        let miniPG = createGraphics(150, 150);
-        miniPG.clear();
-        for (let x = mx - 65; x < mx + 65; x++) {
-          for (let y = my - 65; y < my + 65; y++) {
-            if (dist(x, y, mx, my) < 65) {
-              miniPG.set(x - mx + 75, y - my + 75, baseMapImgs[typeIndex][index].get(x, y));
-            }
-          }
-        }
-        miniPG.updatePixels();
-        clipPoints[actionCount].push({ x: mx, y: my, index: index, actionCount: actionCount, pg: miniPG });
-      }
-
-      if (clipPoints[actionCount]) {
-        for (let p2 of clipPoints[actionCount]) {
-          drawingBoard.noStroke();
-          for (let i = 150; i > 120; i--) {
-            let t = map(i, 120, 150, 1, 0.6);
-            let c = lerpColor(
-              color(85, 167, 255),
-              color(255, 255, 255),
-              t
-            );
-            c.setAlpha(2);
-            drawingBoard.fill(c);
-            drawingBoard.ellipse(p2.x, p2.y, i, i);
-          }
-        }
-        for (let p2 of clipPoints[actionCount]) {
-          drawingBoard.imageMode(CENTER);
-          drawingBoard.image(p2.pg, p2.x, p2.y);
-        }
-      }
-
-      image(drawingBoard, 0, 0);
-
-      image(mouseImg, mx - mouseImg.width / 2, my - mouseImg.height / 2);
-    } else {
-      image(bgImgs[typeIndex], 0, 0);
-      for (let icon of typeIcons[typeIndex]) {
+    for (let icon of coverIcons) {
+      if (icon.drag) {
         icon.display();
-        icon.update();
       }
-      for (let icon of typeIcons[typeIndex]) {
-        if (icon.drag) {
-          icon.display();
+    }
+    if (showQuery) {
+      if (showCoverCam) {
+        step1_camY = lerp(step1_camY, height - coverImgs[5].height, 0.05);
+        image(coverImgs[5], width / 2 - coverImgs[5].width / 2, step1_camY);
+        if (abs(step1_camY - (height - coverImgs[5].height)) < 5 && !screenFlash.active) {
+          screenFlash.start(() => {
+            step = 2;
+          });
         }
+      } else {
+        image(coverImgs[6], width / 2 - coverImgs[6].width / 2, height / 2 + 50);
+        push();
+        let lx = width / 2 - coverImgs[9].width / 2 - 200;
+        let ly = height / 2 + 150;
+        translate(lx + coverImgs[9].width / 2, ly + coverImgs[9].height / 2);
+        if (mx > lx && mx < lx + coverImgs[9].width && my > ly && my < ly + coverImgs[9].height) {
+          scale(1.1);
+        } else {
+          scale(1);
+        }
+        image(coverImgs[9], -coverImgs[9].width / 2, -coverImgs[9].height / 2);
+        if (mx > lx && mx < lx + coverImgs[9].width && my > ly && my < ly + coverImgs[9].height) {
+          noFill();
+          stroke(255);
+          strokeWeight(5);
+          rectMode(CENTER);
+          rect(0, -20, 170, 75, 50);
+          rectMode(CORNER);
+        }
+        pop();
+
+        push();
+        lx = width / 2 - coverImgs[8].width / 2 + 200;
+        translate(lx + coverImgs[8].width / 2, ly + coverImgs[8].height / 2);
+        if (mx > lx && mx < lx + coverImgs[8].width && my > ly && my < ly + coverImgs[8].height) {
+          scale(1.1);
+        } else {
+          scale(1);
+        }
+        image(coverImgs[8], -coverImgs[8].width / 2, -coverImgs[8].height / 2);
+        if (mx > lx && mx < lx + coverImgs[8].width && my > ly && my < ly + coverImgs[8].height) {
+          noFill();
+          stroke(255);
+          strokeWeight(5);
+          rectMode(CENTER);
+          rect(0, -20, 170, 75, 50);
+          rectMode(CORNER);
+        }
+        pop();
       }
-      image(camImg, 60, 280);
+    }
+  } else if (step == 2) {
+    image(sceneBgImg, 0, 0);
+    image(sceneTitleImg, width / 2 - sceneTitleImg.width / 2, height / 2 - sceneTitleImg.height / 2);
+    sceneChooseOrbitIcon.update();
+    sceneChooseOrbitIcon.display();
+  } else if (step == 3) {
+    if (isFault) {
+      fauletBackground[sceneChooseIndex].update();
+      fauletBackground[sceneChooseIndex].display();
+    } else {
+      image(bgImages[sceneChooseIndex], 0, 0);
+    }
+    for (let icon of typeIcons[sceneChooseIndex]) {
+      icon.display();
+      icon.update();
+    }
+    for (let icon of typeIcons[sceneChooseIndex]) {
+      if (icon.drag) {
+        icon.display();
+      }
+    }
+    if (!isFault || typeIcons[sceneChooseIndex].length > 200) {
+      homeButtonIcon.display();
+    }
+    if (showCam) {
+      camIcon.display();
+      camIcon.shousuo();
+    }
+    if (showPhone) {
+      phoneIcon.display();
+      phoneIcon.update(phoneScale);
+
+      if (!isFault) {
+        backIcon.display();
+      }
+    }
+    if (isFault) {
+      if (frameCount % 15 == 0) {
+        let icons = typeIcons[sceneChooseIndex];
+        let index = int(random(typeImgs[sceneChooseIndex].length));
+        let img = typeImgs[sceneChooseIndex][index];
+        let icon = new Icon(img, random(-300, width), random(-300, height), false);
+        icon.scale = random(0.5, 1);
+        icons.push(icon);
+      }
+      if (mouseIsPressed && frameCount % 2 == 0) {
+        let icons = typeIcons[sceneChooseIndex];
+        let index = int(random(sceneChooseIndex * 3, sceneChooseIndex * 3 + 2));
+        let img = sceneChooseImgs[index];
+        icons.push(new Icon(img, mx - img.width / 2, my - img.height / 2, false));
+      }
+    }
+    if (millis() - step3Time <= 4000) {
+      step3TipsA = min(255, step3TipsA + 5);
+      tint(255, step3TipsA);
+      image(tipsImg, width / 2 - tipsImg.width / 2, height - 100 - tipsImg.height / 2);
+      noTint();
+    }
+  } else if (step == 4) {
+    if (frameCount % 5 == 0) {
+      titleIndex++;
+    }
+    image(weiyeBgImg, 0, 0);
+    let titleWidthCount1 = 0;
+    let len1 = 19;
+    for (let i = 0; i < len1; i++) {
+      titleWidthCount1 += weiyeBgTitleImgs[i].width;
+    }
+    let titleStartX = width / 2 - titleWidthCount1 / 2;
+    for (let i = 0; i < len1; i++) {
+      if (i <= titleIndex) {
+        let offsetY = weiyeTitleOffset[i];
+        image(weiyeBgTitleImgs[i], titleStartX, height / 2 - 40 - weiyeBgTitleImgs[i].height / 2 + offsetY);
+      }
+      titleStartX += weiyeBgTitleImgs[i].width;
+    }
+    let titleWidthCount2 = 0;
+    let len2 = weiyeBgTitleImgs.length;
+    for (let i = len1; i < len2; i++) {
+      titleWidthCount2 += weiyeBgTitleImgs[i].width;
+    }
+    titleStartX = width / 2 - titleWidthCount2 / 2;
+    for (let i = len1; i < len2; i++) {
+      if (i < titleIndex) {
+        let offsetY = weiyeTitleOffset[i];
+        image(weiyeBgTitleImgs[i], titleStartX, height / 2 + 40 - weiyeBgTitleImgs[i].height / 2 + offsetY);
+      }
+      titleStartX += weiyeBgTitleImgs[i].width + 2;
     }
   }
+  screenFlash.update();
 }
 
 function keyPressed() {
@@ -265,66 +325,124 @@ function keyPressed() {
   }
 }
 
-function toType(index) {
-  typeIndex = index;
-  step = 3;
-  document.querySelector(".container").style.display = "none";
+function doubleClicked() {
+  if (step == 1) {
+    showQuery = true;
+  }
 }
 
 function mousePressed() {
+  if (!bgm.isLooping()) {
+    bgm.loop();
+  }
+
+  console.log(int(mx), int(my));
   if (step == 1) {
-    step = 2;
-  } else if (step == 2) {
-    let prevY = 64;
-    for (let i = 0; i < 3; i++) {
-      if (i > 0) {
-        prevY += menuImgs[i - 1].height + 32;
-      }
-      if (mx >= 64 && mx <= 64 + menuImgs[i].width && my >= prevY && my <= prevY + menuImgs[i].height) {
-        toType(i);
-        break;
-      }
-    }
-  } else if (step == 3) {
-    for (let i = typeIcons[typeIndex].length - 1; i >= 0; i--) {
-      let icon = typeIcons[typeIndex][i];
+    for (let i = coverIcons.length - 1; i >= 0; i--) {
+      let icon = coverIcons[i];
       let bool = icon.mousePressed();
       if (bool) {
         break;
       }
     }
-    if (!takePhoto) {
-      if (mx > 60 && mx < 60 + camImg.width && my > 280 && my < 280 + camImg.height) {
-        takePhoto = true;
-        photoPG = get();
+
+    if (showQuery) {
+      let lx = width / 2 - coverImgs[9].width / 2 - 200;
+      let ly = height / 2 + 150;
+      let bool1 = mx > lx && mx < lx + coverImgs[9].width && my > ly && my < ly + coverImgs[9].height;
+      lx = width / 2 - coverImgs[8].width / 2 + 200;
+      let bool2 = mx > lx && mx < lx + coverImgs[8].width && my > ly && my < ly + coverImgs[8].height;
+      if (bool1 || bool2) {
+        showCoverCam = true;
+        click.play();
       }
+    }
+  } else if (step == 2) {
+    let index = sceneChooseOrbitIcon.mousePressed();
+    if (index > -1) {
+      sceneChooseIndex = int(index / 3);
+      step = 3;
+      step3Time = millis();
+      step3TipsA = 0;
+    }
+  } else if (step == 3) {
+    if (!isFault && !showPhone) {
+      let index = -1;
+      for (let i = typeIcons[sceneChooseIndex].length - 1; i >= 0; i--) {
+        let bool = typeIcons[sceneChooseIndex][i].mousePressed();
+        if (bool) {
+          index = i;
+          break;
+        }
+      }
+      if (index > -1) {
+        moveIndexToEnd(typeIcons[sceneChooseIndex], index);
+      }
+    }
+
+    if (!isFault && homeButtonIcon.mousePressed()) {
+      window.location.reload();
+    }
+    if (typeIcons[sceneChooseIndex].length > 100 && homeButtonIcon.mousePressed()) {
+      step = 4;
+      weiyeTime = millis();
+      typing.play();
+    }
+    if (showPhone) {
+      let bool = phoneIcon.mousePressed();
+      let takePhoneX = phoneIcon.x + phoneIcon.img.width / 2 - phoneIcon.scale * phoneIcon.img.width / 2 + (phoneIcon.img.width - 112) * phoneIcon.scale;
+      let takePhoneY = phoneIcon.y + phoneIcon.img.height / 2 - phoneIcon.scale * phoneIcon.img.height / 2 + (phoneIcon.img.height / 2) * phoneIcon.scale;
+      if (bool && dist(mx, my, takePhoneX, takePhoneY) < 50 * phoneIcon.scale) {
+        showPhone = false;
+        isFault = true;
+        screenFlash.start();
+      }
+
+      if (!isFault && backIcon.mousePressed()) {
+        step = 2;
+        reset();
+        return;
+      }
+    }
+    if (showCam && camIcon.mousePressed()) {
+      showPhone = true;
+      showCam = false;
+    }
+  } else if (step == 4) {
+    if (millis() - weiyeTime >= 3 * 1000) {
+      window.location.reload();
     }
   }
 }
 
 function mouseReleased() {
-  if (typeIndex > -1) {
-    let index = -1;
-    for (let i = 0; i < typeIcons[typeIndex].length; i++) {
-      if (typeIcons[typeIndex][i].drag) {
-        index = i;
-      }
-      typeIcons[typeIndex][i].mouseReleased();
-    }
-    if (index > -1) {
-      let t = typeIcons[typeIndex][index];
-      typeIcons[typeIndex][index] = typeIcons[typeIndex][typeIcons[typeIndex].length - 1];
-      typeIcons[typeIndex][typeIcons[typeIndex].length - 1] = t;
+  for (let i = 0; i < coverIcons.length; i++) {
+    coverIcons[i].mouseReleased();
+  }
+  if (sceneChooseIndex >= 0) {
+    let icons = typeIcons[sceneChooseIndex];
+    for (let i = 0; i < icons.length; i++) {
+      icons[i].mouseReleased();
     }
   }
+  phoneIcon.mouseReleased();
+  backIcon.mouseReleased();
+  camIcon.mouseReleased();
+  homeButtonIcon.mouseReleased();
+}
 
-  if (clipPoints[actionCount]) {
-    for (let p2 of clipPoints[actionCount]) {
-      p2.pg = undefined
+function mouseWheel(e) {
+  e.preventDefault();
+  if (e.deltaY > 0) {
+    console.log('放大');
+    if (step == 3) {
+      phoneScale = min(1.5, phoneScale + 0.1);
+    }
+  } else {
+    if (step == 3) {
+      phoneScale = max(0.5, phoneScale - 0.1);
     }
   }
-
-  actionCount++;
 }
 
 function scaleMain() {
@@ -336,8 +454,33 @@ function scaleMain() {
 }
 window.addEventListener('resize', scaleMain);
 
-function myLoadImage(url) {
-  // url = url.replace("images/", "");
-  // return loadImage("https://assets.fashengwang.com/website/phoneEAtsFirst/" + url)
-  return loadImage(url)
+function moveIndexToEnd(arr, index) {
+  // 边界保护
+  if (!Array.isArray(arr)) return arr;
+  if (index < 0 || index >= arr.length) return arr;
+
+  // 取出该元素
+  const item = arr.splice(index, 1)[0];
+
+  // 放到末尾
+  arr.push(item);
+
+  return arr;
+}
+
+function reset() {
+  showCam = true;
+  showPhone = false;
+  isFault = false;
+  showCoverCam = false;
+  typeIcons = [[], [], []];
+  phoneScale = 1;
+  titleIndex = 0;
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < typeImgs[i].length; j++) {
+      let x = random(113, 1823 - typeImgs[i][j].width)
+      let y = random(411, 1073 - typeImgs[i][j].height);
+      typeIcons[i].push(new Icon(typeImgs[i][j], x, y, false));
+    }
+  }
 }

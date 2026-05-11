@@ -1,62 +1,56 @@
 class Icon {
-  constructor(img, x, y, mode) {
+  constructor(img, x, y, doudong) {
     this.img = img;
-    this.x = x + random(-300, 300);
-    if (this.x > width - this.img.width / 2) {
-      this.x = width - this.img.width / 2;
-    }
-    if (this.x < this.img.width / 2) {
-      this.x = this.img.width / 2;
-    }
-    this.y = y + random(-300, 300);
-    if (this.y > height - this.img.height / 2) {
-      this.y = height - this.img.height / 2;
-    }
-    if (this.y < this.img.height / 2) {
-      this.y = this.img.height / 2;
-    }
+    this.x = x;
+    this.y = y;
     this.drag = false;
-    this.mode = mode;
-    this.dx = random([-0.5, 0.5]);
-    this.dy = random([-0.5, 0.5]);
-    this.fc = int(random(1000));
+    this.doudong = doudong;
+    this.scale = 1;
+    this.scaleD = 0.01;
+  }
+
+  shousuo() {
+    this.scale += this.scaleD;
+    if (this.scale > 1.1 || this.scale < 0.9) {
+      this.scaleD = -this.scaleD;
+    }
   }
 
   display() {
-    image(this.img, this.x, this.y);
+    let offsetX = 0;
+    let offsetY = 0;
+    if (this.doudong && !this.drag && frameCount % 120 < 30) {
+      offsetX = random(-3, 3);
+      offsetY = random(-3, 3);
+    }
+    push();
+    translate(this.x + offsetX + this.img.width / 2, this.y + offsetY + this.img.height / 2);
+    scale(this.scale);
+    translate(-this.img.width / 2, -this.img.height / 2);
+    image(this.img, 0, 0);
+    pop();
+
+    // fill(255, 25, 25, 50);
+    // rect(this.x + this.img.width / 2 - this.scale * this.img.width / 2, this.y + this.img.height / 2 - this.scale * this.img.height / 2, this.scale * this.img.width, this.scale * this.img.height);
+    // let takePhoneX = this.x + this.img.width / 2 - this.scale * this.img.width / 2 + (this.img.width - 112) * this.scale;
+    // let takePhoneY = this.y + this.img.height / 2 - this.scale * this.img.height / 2 + (this.img.height / 2) * this.scale;
+    // ellipse(takePhoneX, takePhoneY, 100 * this.scale, 100 * this.scale);
   }
 
-  update() {
+  update(_scale = 1) {
+    this.scale = _scale;
     if (this.drag) {
       this.x = mx - this.img.width / 2;
       this.y = my - this.img.height / 2;
-    } else if (this.mode == 2) {
-      // 上下左右浮动效果：让图标在 mode == 2 时缓慢漂移
-      this.x += this.dx;
-      this.y += this.dy;
-      if (random(1) < 0.01) {
-        this.dx = random([-0.5, 0.5]);
-        this.dy = random([-0.5, 0.5]);
-      }
-      if (this.dx < 0 && this.x < this.img.width / 2) {
-        this.dx = -this.dx;
-      }
-      if (this.dx > 0 && this.x > width - this.img.width / 2) {
-        this.dx = -this.dx;
-      }
-      if (this.dy < 0 && this.y < this.img.height / 2) {
-        this.dy = -this.dy;
-      }
-      if (this.dy > 0 && this.y > height - this.img.height / 2) {
-        this.dy = -this.dy;
-      }
     }
-
-    this.fc++;
   }
 
   mousePressed() {
-    if (mx >= this.x && mx <= this.x + this.img.width && my >= this.y && my <= this.y + this.img.height) {
+    let startX = this.x + this.img.width / 2 - this.scale * this.img.width / 2;
+    let startY = this.y + this.img.height / 2 - this.scale * this.img.height / 2;
+    let w = this.scale * this.img.width;
+    let h = this.scale * this.img.height;
+    if (mx >= startX && mx <= startX + w && my >= startY && my <= startY + h) {
       this.drag = true;
     }
     return this.drag;

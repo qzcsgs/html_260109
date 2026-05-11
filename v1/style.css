@@ -1,0 +1,29 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+canvas {
+  transform-origin: top left;
+}
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9;
+  overflow: auto;
+  background-color: rgb(152, 152, 152);
+}
+
+.menu-list {
+  padding: 88px 64px;
+}
+
+.menu-list img {
+  margin-bottom: 16px;
+}
