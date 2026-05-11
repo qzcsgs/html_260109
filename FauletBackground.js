@@ -42,6 +42,6 @@ class FauletBackground {
   
   setRandomInterval() {
     // 设置500ms到1500ms之间的随机间隔
-    this.switchInterval = random(500, 1500);
+    this.switchInterval = random(300, 2500);
   }
 }

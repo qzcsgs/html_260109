@@ -1,7 +1,7 @@
 class FigureEight {
   constructor(img) {
     this.t = 0;
-    this.speed = 0.05;
+    this.speed = 0.03;
 
     // 8字大小
     this.A = width * 0.03;

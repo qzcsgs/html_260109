@@ -185,10 +185,10 @@ function draw() {
           });
         }
       } else {
-        image(coverImgs[6], width / 2 - coverImgs[6].width / 2, height / 2 + 50);
+        image(coverImgs[6], width / 2 - coverImgs[6].width / 2, height / 2 + 90);
         push();
         let lx = width / 2 - coverImgs[9].width / 2 - 200;
-        let ly = height / 2 + 150;
+        let ly = height / 2 + 190;
         translate(lx + coverImgs[9].width / 2, ly + coverImgs[9].height / 2);
         if (mx > lx && mx < lx + coverImgs[9].width && my > ly && my < ly + coverImgs[9].height) {
           scale(1.1);
@@ -285,7 +285,7 @@ function draw() {
       noTint();
     }
   } else if (step == 4) {
-    if (frameCount % 5 == 0) {
+    if (frameCount % 15 == 0) {
       titleIndex++;
     }
     image(weiyeBgImg, 0, 0);
@@ -348,7 +348,7 @@ function mousePressed() {
 
     if (showQuery) {
       let lx = width / 2 - coverImgs[9].width / 2 - 200;
-      let ly = height / 2 + 150;
+      let ly = height / 2 + 190;
       let bool1 = mx > lx && mx < lx + coverImgs[9].width && my > ly && my < ly + coverImgs[9].height;
       lx = width / 2 - coverImgs[8].width / 2 + 200;
       let bool2 = mx > lx && mx < lx + coverImgs[8].width && my > ly && my < ly + coverImgs[8].height;
