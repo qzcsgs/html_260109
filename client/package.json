@@ -11,7 +11,13 @@
     "productName": "MyClient",
     "win": {
       "target": "nsis"
-    }
+    },
+    "extraResources": [
+      {
+        "from": "web",
+        "to": "web"
+      }
+    ]
   },
   "devDependencies": {
     "electron": "^42.0.1",

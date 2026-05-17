@@ -1,11 +1,15 @@
 const { app, BrowserWindow, globalShortcut } = require('electron')
+const startServer = require("./server")
 
-const ALLOW_URL = "https://phoneeatsfirst.top"   // ← 允许访问的网址域名
+
+// const ALLOW_URL = "https://phoneeatsfirst.top"   // ← 允许访问的网址域名
+const ALLOW_URL = "http://localhost:3000"   // ← 允许访问的网址域名
 let inputBuffer = ""           // 键盘输入缓存
 const EXIT_CODE = "exit123"    // 你的退出密码
 const REFRESH_CODE = "rrrrr" // 强制刷新
 
-function createWindow() {
+async function createWindow() {
+  await startServer()
   const win = new BrowserWindow({
     kiosk: true,
     frame: false,
