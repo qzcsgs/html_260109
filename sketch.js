@@ -27,6 +27,8 @@ let phoneImg;
 let phoneIcon;
 let showCam = true;
 let showPhone = false;
+let phoneTipsImg;
+let phoneTipsTime = 0;
 let isFault = false;
 let faultColor = null;
 let weiyeBgImg;
@@ -87,6 +89,7 @@ function preload() {
   homeButtonImg = loadImage('assets/home.png');
   camImg = loadImage('assets/cam.png');
   phoneImg = loadImage('assets/phone.png');
+  phoneTipsImg = loadImage('assets/phone_tips.png');
   weiyeBgImg = loadImage('assets/weiye/bg.png');
   for (let i = 1; i <= 31; i++) {
     weiyeBgTitleImgs.push(loadImage('assets/weiye/title/image_' + i + '.png'));
@@ -139,7 +142,7 @@ function initIcons() {
 function resizeImage() {
   resizeImgs(coverImgs);
   resizeImgs(sceneChooseImgs);
-  resizeImgs([sceneBgImg, sceneTitleImg, homeButtonImg, camImg, phoneImg, weiyeBgImg, tipsImg, backImg]);
+  resizeImgs([sceneBgImg, sceneTitleImg, homeButtonImg, camImg, phoneImg, phoneTipsImg, weiyeBgImg, tipsImg, backImg]);
   resizeImgs(bgImages);
   for (let i = 0; i < typeImgs.length; i++) {
     resizeImgs(typeImgs[i]);
@@ -257,6 +260,10 @@ function draw() {
     if (showPhone) {
       phoneIcon.display();
       phoneIcon.update(phoneScale);
+
+      if (millis() - phoneTipsTime <= 2000) {
+        image(phoneTipsImg, width / 2 - phoneTipsImg.width / 2, height - 100 - phoneTipsImg.height / 2);
+      }
 
       if (!isFault) {
         backIcon.display();
@@ -406,6 +413,7 @@ function mousePressed() {
     }
     if (showCam && camIcon.mousePressed()) {
       showPhone = true;
+      phoneTipsTime = millis();
       showCam = false;
     }
   } else if (step == 4) {
